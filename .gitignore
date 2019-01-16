@@ -2,7 +2,10 @@
 __pycache__
 
 # Data
-data*.json
+data/
 
 # test html
 tmp.html
+
+# Test python
+__test*

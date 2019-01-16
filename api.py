@@ -1,3 +1,4 @@
+import re
 import requests
 from pyquery import PyQuery as pq
 
@@ -36,8 +37,35 @@ def getAllRating(id):
     arr = getRating(id, i)
     if arr == __null__:
       break
-    print(i)
     i += 1
     data += arr
-  print(len(data))
   return data
+
+__super_max__ = 50000
+
+idRex = r"\/Images\/[0-9]*\/(?P<id>[0-9]*)(?:\/)"
+def getId (src):
+  return re.search(idRex, src).group('id')
+
+def getProductList(category):
+  r = requests.post('https://www.thegioididong.com/aj/CategoryV5/Product',
+    data = {
+      'Category': category,
+      'PageSize': __super_max__,
+      'PageIndex': 0
+    })
+  arr = []
+  cr = pq(r.text)
+  for elem in cr('.homeproduct>li'):
+    img = cr(elem).find('a img')[0]
+    src = img.get('data-original') or img.get('src')
+    res = {
+      'id': getId(src),
+      'name': cr(elem).find('h3').text(),
+      'price': cr(elem).find('.price strong').text(),
+      'fake_price': cr(elem).find('.price span').text(),
+      'promo': cr(elem).find('.promo p').text(),
+      'start': len(cr(elem).find('.ratingresult .icontgdd-ystar')),
+    }
+    arr.append(res)
+  return arr
