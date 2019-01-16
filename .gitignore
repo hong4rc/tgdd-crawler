@@ -1,0 +1,8 @@
+# Python cache
+__pycache__
+
+# Data
+data*.json
+
+# test html
+tmp.html
