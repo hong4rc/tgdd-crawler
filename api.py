@@ -58,16 +58,20 @@ def getProductList(category):
       'PageSize': __super_max__,
       'PageIndex': 0
     })
-  if r.text.find('emptystate') != -1:
-    r = requests.post('https://www.thegioididong.com/aj/AccessoryV4/Product',
-      data = {
-        'Category': category,
-        'Size': __super_max__,
-        'Index': 0
-      })
+  return formatProduct(r.text)
+
+def getAllAccessory ():
+  r = requests.post('https://www.thegioididong.com/aj/AccessoryV4/Product',
+    data = {
+      'Size': __super_max__,
+      'Index': 0
+    })
+  return formatProduct(r.text)
+
+def formatProduct (text):
   arr = []
-  cr = pq(r.text)
-  for elem in cr('.homeproduct>li, .cate>li'):
+  cr = pq(text)
+  for elem in cr('ul:not(.emptystate)>li'):
     img = cr(elem).find('a img')[0]
     src = img.get('data-original') or img.get('src')
     info = getInfo(src)
@@ -75,8 +79,8 @@ def getProductList(category):
       'id': info['id'],
       'category': info['cago'],
       'name': cr(elem).find('h3').text(),
-      'price': cr(elem).find('.price strong').text(),
-      'fake_price': cr(elem).find('.price span').text(),
+      'price': cr(elem).find('.price strong, img+strong').text(),
+      'fake_price': cr(elem).find('strong+span').text(),
       'promo': cr(elem).find('.promo p').text(),
       'start': len(cr(elem).find('.ratingresult .icontgdd-ystar')),
     }
