@@ -43,9 +43,13 @@ def getAllRating(id):
 
 __super_max__ = 50000
 
-idRex = r"\/Images\/[0-9]*\/(?P<id>[0-9]*)(?:\/)"
-def getId (src):
-  return re.search(idRex, src).group('id')
+idRex = r"\/Images\/(?P<cago>[0-9]*)\/(?P<id>[0-9]*)(?:\/)"
+def getInfo (src):
+  res = re.search(idRex, src)
+  return {
+    'id': res.group('id'),
+    'cago': res.group('cago')
+  }
 
 def getProductList(category):
   r = requests.post('https://www.thegioididong.com/aj/CategoryV5/Product',
@@ -59,8 +63,10 @@ def getProductList(category):
   for elem in cr('.homeproduct>li'):
     img = cr(elem).find('a img')[0]
     src = img.get('data-original') or img.get('src')
+    info = getInfo(src)
     res = {
-      'id': getId(src),
+      'id': info['id'],
+      'category': info['cago'],
       'name': cr(elem).find('h3').text(),
       'price': cr(elem).find('.price strong').text(),
       'fake_price': cr(elem).find('.price span').text(),
