@@ -14,7 +14,9 @@ def crawlCategory(category):
     pData = getAllRating(id)
     save(pData, 'data/category_' + str(category), 'product_' + str(id) + '.json')
 
-MAX_CATEGORY = 200
+# todo: crawl list of category
+
+MAX_CATEGORY = 8000
 i = 0
 while i < MAX_CATEGORY:
   crawlCategory(i)
