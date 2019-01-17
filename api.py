@@ -41,7 +41,7 @@ def getAllRating(id):
     data += arr
   return data
 
-__super_max__ = 50000
+__super_max__ = 5000
 
 idRex = r"\/Images\/(?P<cago>[0-9]*)\/(?P<id>[0-9]*)(?:\/)"
 def getInfo (src):
@@ -58,9 +58,16 @@ def getProductList(category):
       'PageSize': __super_max__,
       'PageIndex': 0
     })
+  if r.text.find('emptystate') != -1:
+    r = requests.post('https://www.thegioididong.com/aj/AccessoryV4/Product',
+      data = {
+        'Category': category,
+        'Size': __super_max__,
+        'Index': 0
+      })
   arr = []
   cr = pq(r.text)
-  for elem in cr('.homeproduct>li'):
+  for elem in cr('.homeproduct>li, .cate>li'):
     img = cr(elem).find('a img')[0]
     src = img.get('data-original') or img.get('src')
     info = getInfo(src)
