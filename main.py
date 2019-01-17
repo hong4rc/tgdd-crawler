@@ -1,18 +1,32 @@
-from api import getAllRating, getRating, getProductList
+from api import getAllRating, getAllAccessory, getProductList
 import json
 from utils import save
 
-def crawlCategory(category):
-  products = getProductList(category)
-  if len(products) == 0:
-    print(category, 'is not exist!!!')
-    return
-  save(products, 'data', 'category_' + str(category) + '.json')
-  for product in products:
+def saveCategory (cateId, data):
+  save(data, 'data', 'category_' + str(cateId) + '.json')
+  for product in data:
     id = product['id']
     print(id, 'crawling...')
     pData = getAllRating(id)
-    save(pData, 'data/category_' + str(category), 'product_' + str(id) + '.json')
+    save(pData, 'data/category_' + str(cateId), 'product_' + str(id) + '.json')
+
+def crawlCategory(cateId):
+  products = getProductList(cateId)
+  if len(products) == 0:
+    print(cateId, 'is not exist!!!')
+    return
+  saveCategory(cateId, products)
+
+# save accessory to right cagotery
+data = {}
+for product in getAllAccessory():
+  cateId = product['category']
+  if not(hasattr(data, cateId)):
+    data[cateId] = []
+  data[cateId].append(product)
+
+for cateId in data:
+  saveCategory(cateId, data[cateId])
 
 # todo: crawl list of category
 
