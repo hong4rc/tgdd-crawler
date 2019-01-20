@@ -21,7 +21,7 @@ def crawlCategory(cateId):
 data = {}
 for product in getAllAccessory():
   cateId = product['category']
-  if not(hasattr(data, cateId)):
+  if not(cateId in data):
     data[cateId] = []
   data[cateId].append(product)
 
